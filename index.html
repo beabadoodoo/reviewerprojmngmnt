@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PM Pro Flashcards</title>
+    <style>
+        :root {
+            --primary: #0038a8; 
+            --secondary: #ffd700; 
+            --success: #27ae60;
+            --danger: #e74c3c;
+            --bg: #f8f9fa;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            margin: 0;
+        }
+
+        .app-container {
+            width: 100%;
+            max-width: 650px;
+            padding: 20px;
+            text-align: center;
+        }
+
+        /* Progress Bar */
+        .progress-wrapper {
+            width: 100%;
+            background: #e0e0e0;
+            height: 10px;
+            border-radius: 5px;
+            margin-bottom: 25px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: var(--primary);
+            width: 0%;
+            border-radius: 5px;
+            transition: width 0.4s ease-out;
+        }
+
+        .stats-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 12px;
+            font-weight: 600;
+            color: #444;
+        }
+
+        /* Flashcard Animation */
+        .flashcard-box {
+            perspective: 1500px;
+            width: 100%;
+            height: 380px;
+            cursor: pointer;
+        }
+
+        .inner-card {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            transition: transform 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            transform-style: preserve-3d;
+        }
+
+        .inner-card.flipped {
+            transform: rotateY(180deg);
+        }
+
+        .face {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 45px;
+            box-sizing: border-box;
+            border-radius: 25px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+            font-size: 1.3rem;
+            line-height: 1.5;
+        }
+
+        .front {
+            background: white;
+            color: #2d3436;
+            border: 2px solid #eee;
+        }
+
+        .back {
+            background: var(--primary);
+            color: white;
+            transform: rotateY(180deg);
+            font-weight: bold;
+            font-size: 2rem;
+        }
+
+        /* English Buttons */
+        .button-group {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-top: 35px;
+        }
+
+        .btn {
+            padding: 18px;
+            border: none;
+            border-radius: 15px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            cursor: pointer;
+            color: white;
+            transition: all 0.2s ease;
+        }
+
+        .btn:active { transform: scale(0.96); }
+        .btn-incorrect { background: var(--danger); }
+        .btn-correct { background: var(--success); }
+
+        /* End Screen */
+        .screen-hidden { display: none !important; }
+        .result-card {
+            background: white;
+            padding: 50px;
+            border-radius: 30px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+        }
+
+        kbd {
+            background: #fff;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            padding: 2px 6px;
+            font-family: monospace;
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+<body>
+
+<div class="app-container" id="game-view">
+    <div class="stats-row">
+        <span><span id="idx-now">1</span> / <span id="idx-total">100</span></span>
+        <span id="status-tag" style="color: var(--primary);">Main Deck</span>
+    </div>
+    
+    <div class="progress-wrapper">
+        <div class="progress-fill" id="progress-bar"></div>
+    </div>
+
+    <div class="flashcard-box" onclick="doFlip()">
+        <div class="inner-card" id="main-card">
+            <div class="face front" id="question">Loading...</div>
+            <div class="face back" id="answer">Loading...</div>
+        </div>
+    </div>
+
+    <div class="button-group">
+        <button class="btn btn-incorrect" onclick="submitResult(false)">Incorrect</button>
+        <button class="btn btn-correct" onclick="submitResult(true)">Correct</button>
+    </div>
+    
+    <div style="margin-top: 25px; color: #888; font-size: 0.85rem;">
+        Shortcuts: <kbd>Space</kbd> Flip | <kbd>←</kbd> Incorrect | <kbd>→</kbd> Correct
+    </div>
+</div>
+
+<div class="app-container screen-hidden" id="end-view">
+    <div class="result-card">
+        <h1 id="result-title">Session Complete!</h1>
+        <p id="final-stats" style="font-size: 1.2rem; margin: 25px 0;"></p>
+        
+        <div style="display: flex; flex-direction: column; gap: 15px;">
+            <button id="btn-review" class="btn btn-incorrect" onclick="restartReview()" style="width:100%">Review Mistakes Only</button>
+            <button class="btn btn-correct" onclick="location.reload()" style="width:100%; background: var(--primary);">Start Fresh (Full Deck)</button>
+        </div>
+    </div>
+</div>
+
+<script>
+const flashcardsData = [
+    {t:"Project", d:"An endeavor to produce/accomplish through a unique set of interrelated tasks and an effective utilization of resources."},
+    {t:"Product", d:"Can either be a component of another item or an end item itself."},
+    {t:"Capability to perform a service", d:"Business function supporting a production or distribution."},
+    {t:"Result", d:"Refers to an output from performing project management processes and activities."},
+    {t:"Project Objective", d:"A project has a well-defined objective - an expected result or product."},
+    {t:"Triple Constraint", d:"A framework used by project managers to evaluate the competing demands of scope, time, and cost."},
+    {t:"Project Management", d:"The application of knowledge, skills, tools and techniques to project activities to meet project requirements."},
+    {t:"Project Stakeholders", d:"People involved in or affected by project activities."},
+    {t:"Project Sponsor", d:"The person who provides the direction and funding for the project."},
+    {t:"Program", d:"A group of related projects managed in a coordinated way to obtain benefits and control not available from managing them individually."},
+    {t:"Project Portfolio", d:"A collection of projects and programs that are grouped together to facilitate effective management to meet strategic business objectives."},
+    {t:"Core Knowledge Areas", d:"Four areas that lead to specific project objectives: project scope, time, cost, and quality management."},
+    {t:"Facilitating Knowledge Areas", d:"Four areas through which project objectives are achieved: human resource, communications, risk, and procurement management."},
+    {t:"Project Integration Management", d:"The ninth knowledge area that coordinates all other knowledge areas."},
+    {t:"Project Life Cycle", d:"A collection of project phases, such as concept, development, implementation, and close-out."},
+    {t:"Deliverable", d:"A product or service produced or provided as part of a project."},
+    {t:"Initiating Process Group", d:"Process where a new project or phase gets defined and authorized by management."},
+    {t:"Planning Process Group", d:"Process of establishing scope and objectives for the project work."},
+    {t:"Executing Process Group", d:"Process of integrating people and other resources to carry out the project management plan."},
+    {t:"Monitoring and Controlling Group", d:"Process of measuring and monitoring progress to ensure project objectives are met."},
+    {t:"Closing Process Group", d:"Process of formalizing acceptance of the product, service, or result and ending the project."},
+    {t:"Project Charter", d:"A document that formally recognizes the existence of a project and provides direction on the project’s objectives and management."},
+    {t:"Strategic Planning", d:"Involves determining long-term objectives by analyzing the strengths and weaknesses of an organization."},
+    {t:"SWOT Analysis", d:"Analyzing Strengths, Weaknesses, Opportunities, and Threats."},
+    {t:"Net Present Value (NPV)", d:"Method of calculating expected net monetary gain or loss by discounting all cash flows to the present point in time."},
+    {t:"Return on Investment (ROI)", d:"Result of subtracting project costs from benefits and then dividing by costs."},
+    {t:"Payback Period", d:"Amount of time it will take to recoup, in the form of net cash inflows, the total amount invested in a project."},
+    {t:"Balanced Scorecard", d:"Methodology that converts an organization’s value drivers to a series of defined metrics."},
+    {t:"Scope", d:"All of the works involved in creating the products of the project and the processes used in creating them."},
+    {t:"Work Breakdown Structure (WBS)", d:"A deliverable-oriented grouping of the work involved in a project that defines the total scope of the project."},
+    {t:"Decomposition", d:"Subdividing project deliverables into smaller pieces."},
+    {t:"WBS Dictionary", d:"Document describing detailed information about each item in the WBS."},
+    {t:"Scope Verification", d:"Involves formal acceptance of the project scope by the stakeholders."},
+    {t:"Scope Creep", d:"The tendency for project scope to keep getting bigger and bigger."},
+    {t:"Activity List", d:"A tabulation of activities to be included on a project schedule."},
+    {t:"Milestone", d:"A significant event in a project that usually has no duration."},
+    {t:"Mandatory Dependencies", d:"Inherent in the nature of the work; sometimes called hard logic."},
+    {t:"Critical Path", d:"The longest path through the network diagram and has the least amount of slack or float."},
+    {t:"Gantt Chart", d:"Standard format for displaying schedule information listing activities and dates in a calendar format."},
+    {t:"PERT Analysis", d:"Network analysis technique used to estimate project duration when there is uncertainty."},
+    {t:"Murphy's Law", d:"States that if something can go wrong, it will."},
+    {t:"Parkinson's Law", d:"States that work expands to fill the time allowed."},
+    {t:"Cost", d:"Resource sacrificed or foregone to achieve a specific objective; something given up in exchange."},
+    {t:"Direct Costs", d:"Costs that can be directly related to producing the products and services of the project."},
+    {t:"Indirect Costs", d:"Costs that are not directly related to the products but are indirectly related to performing the project."},
+    {t:"Sunk Cost", d:"Money that has been spent in the past; should not be included when deciding which projects to invest in."},
+    {t:"Learning Curve Theory", d:"States that unit cost decreases in a regular pattern as more units are produced repetitively."},
+    {t:"Rough Order of Magnitude (ROM)", d:"Estimate of cost made 3 or more years before project completion."},
+    {t:"Cost Baseline", d:"A time-phased budget that project managers use to measure and monitor cost performance."},
+    {t:"Earned Value Management (EVM)", d:"Project performance measurement technique that integrates scope, time and cost data."},
+    {t:"Planned Value (PV)", d:"Portion of approved total cost estimate planned to be spent during a given period."},
+    {t:"Actual Cost (AC)", d:"Total of direct and indirect costs incurred in accomplishing work during a given period."},
+    {t:"Earned Value (EV)", d:"An estimate of the value of the physical work actually completed."},
+    {t:"Quality", d:"The degree to which a set of inherent characteristics fulfills requirements."},
+    {t:"Conformance to Requirements", d:"Project’s processes and products meet written specifications."},
+    {t:"Fitness for Use", d:"A product can be used as it was intended."},
+    {t:"Quality Assurance", d:"Periodically evaluating overall project performance to ensure it satisfies quality standards."},
+    {t:"Pareto Analysis", d:"Identifying the vital few contributors that account for the most quality problems (80/20 rule)."},
+    {t:"Six Sigma", d:"Comprehensive system for achieving, sustaining and maximizing business success."},
+    {t:"Quality Audit", d:"Structured review of quality management activities that help identify lessons learned."},
+    {t:"Intrinsic Motivation", d:"Causes people to participate in an activity for their own enjoyment."},
+    {t:"Extrinsic Motivation", d:"Causes people to do something for a reward or to avoid a penalty."},
+    {t:"Maslow's Hierarchy of Needs", d:"States that people's behaviors are guided by a sequence of needs."},
+    {t:"Power", d:"Potential ability to influence behavior to get people to do things they would not otherwise do."},
+    {t:"Coercive Power", d:"Involves using punishment, threats, or negative approaches."},
+    {t:"Legitimate Power", d:"Getting people to do things based on a position of authority."},
+    {t:"Expert Power", d:"Using personal knowledge and expertise to influence behavior."},
+    {t:"Responsibility Assignment Matrix (RAM)", d:"Matrix that maps the work of the project in the WBS to the people responsible."},
+    {t:"Resource Leveling", d:"Technique for resolving resource conflicts by delaying tasks."},
+    {t:"Project Risk Management", d:"Art and science of identifying, analyzing, and responding to risk throughout the life of a project."},
+    {t:"Risk Utility", d:"The amount of satisfaction or pleasure received from a potential payoff."},
+    {t:"Risk-Averse", d:"Utility rises at a decreasing rate for a person who has a low tolerance for risk."},
+    {t:"Risk-Seeking", d:"Higher tolerance for risk; satisfaction increases when more payoff is at stake."},
+    {t:"Risk Register", d:"Document that contains the results of various risk management processes."},
+    {t:"Contingency Plans", d:"Predefined actions that the team will take if an identified risk event occurs."},
+    {t:"Procurement", d:"Acquiring goods and/or services from an outside source."},
+    {t:"Fixed-Price Contract", d:"Involves a fixed total price for a well-defined product or service."},
+    {t:"Cost-Reimbursable Contract", d:"Payment to the seller for direct and indirect actual costs."},
+    {t:"Statement of Work (SOW)", d:"A description of the work required for the procurement."},
+    {t:"Bidder Conference", d:"Meeting with prospective suppliers to ensure a clear, common understanding."},
+    {t:"Contract Administration", d:"Ensures that the supplier’s performance meets contractual requirements."},
+    {t:"Contract Close-out", d:"Process that includes product verification to determine if work was completed correctly."},
+    {t:"Procurement Audit", d:"Done during contract close out to identify lessons learned in the procurement process."},
+    {t:"Configuration Management", d:"Ensures that the descriptions of the project’s products are correct and complete."},
+    {t:"Change Control Board (CCB)", d:"A formal group of people responsible for approving or rejecting changes on a project."},
+    {t:"Critical Chain Scheduling", d:"A method of scheduling that considers limited resources when creating a project schedule."},
+    {t:"Fallback Plans", d:"Developed for risks that have a high impact on meeting project objectives."},
+    {t:"Request for Proposal (RFP)", d:"Used to solicit proposals from prospective sellers."},
+    {t:"Source Selection", d:"Involves evaluating bidders’ proposals and choosing the best one."},
+    {t:"Analogous Estimating", d:"Uses the actual cost of a previous, similar project as the basis for cost estimating."},
+    {t:"Bottom-up Estimating", d:"Estimating individual work items or activities and summing them to get a project total."},
+    {t:"Tuckman Model", d:"Describes stages of team development: forming, storming, norming, performing, and adjourning."},
+    {t:"External Dependencies", d:"Involve relationships between project and non-project activities."},
+    {t:"Free Slack", d:"Amount of time an activity can be delayed without delaying the early start of successors."},
+    {t:"Cost of Quality", d:"The cost of conformance plus the cost of nonconformance."},
+    {t:"Standard", d:"A document established by an authority, custom, or general consent as a model."},
+    {t:"Portfolio Management", d:"Centralized management of one or more portfolios."},
+    {t:"Activity Attributes", d:"Provide more schedule-related information about each activity."},
+    {t:"Burst", d:"A single node followed by two or more activities."},
+    {t:"Merge", d:"Two or more nodes preceding a single node."},
+    {t:"Cash Flow Analysis", d:"Method for determining the estimated annual costs and benefits for a project."},
+    {t:"Work Package", d:"A task at the lowest level of the WBS."},
+    {t:"Project Manager", d:"The person responsible for ensuring the project is planned and executed with overall responsibility."}
+];
+
+let currentStack = [];
+let mistakeStack = [];
+let currentPos = 0;
+let points = 0;
+
+function randomize(arr) {
+    for (let i = arr.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [arr[i], arr[j]] = [arr[j], arr[i]];
+    }
+}
+
+function startGame() {
+    currentStack = [...flashcardsData];
+    randomize(currentStack);
+    showNext();
+}
+
+function showNext() {
+    const cardEl = document.getElementById('main-card');
+    cardEl.classList.remove('flipped');
+    
+    document.getElementById('question').textContent = currentStack[currentPos].d;
+    document.getElementById('answer').textContent = currentStack[currentPos].t;
+    
+    document.getElementById('idx-now').textContent = currentPos + 1;
+    document.getElementById('idx-total').textContent = currentStack.length;
+    
+    const pct = (currentPos / currentStack.length) * 100;
+    document.getElementById('progress-bar').style.width = pct + "%";
+}
+
+function doFlip() {
+    document.getElementById('main-card').classList.toggle('flipped');
+}
+
+function submitResult(isOk) {
+    if (!isOk) {
+        if (!mistakeStack.includes(currentStack[currentPos])) {
+            mistakeStack.push(currentStack[currentPos]);
+        }
+    } else {
+        points++;
+    }
+
+    if (currentPos < currentStack.length - 1) {
+        currentPos++;
+        showNext();
+    } else {
+        finishGame();
+    }
+}
+
+function finishGame() {
+    document.getElementById('game-view').classList.add('screen-hidden');
+    document.getElementById('end-view').classList.remove('screen-hidden');
+    
+    document.getElementById('final-stats').innerHTML = `
+        Accuracy: <strong>${Math.round((points/currentStack.length)*100)}%</strong><br>
+        Mistakes to review: <strong>${mistakeStack.length}</strong>
+    `;
+    
+    if (mistakeStack.length === 0) {
+        document.getElementById('btn-review').classList.add('screen-hidden');
+        document.getElementById('result-title').textContent = "Mastery Achieved! 🏆";
+    } else {
+        document.getElementById('btn-review').classList.remove('screen-hidden');
+    }
+}
+
+function restartReview() {
+    currentStack = [...mistakeStack];
+    mistakeStack = [];
+    currentPos = 0;
+    points = 0;
+    randomize(currentStack);
+    
+    const tag = document.getElementById('status-tag');
+    tag.textContent = "Mistakes Review";
+    tag.style.color = "var(--danger)";
+    
+    document.getElementById('end-view').classList.add('screen-hidden');
+    document.getElementById('game-view').classList.remove('screen-hidden');
+    showNext();
+}
+
+// Controls
+document.addEventListener('keydown', (e) => {
+    if (document.getElementById('game-view').classList.contains('screen-hidden')) return;
+    if (e.code === 'Space') { e.preventDefault(); doFlip(); }
+    if (e.code === 'ArrowLeft') submitResult(false);
+    if (e.code === 'ArrowRight') submitResult(true);
+});
+
+startGame();
+</script>
+</body>
+</html>
