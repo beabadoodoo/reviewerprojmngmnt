@@ -191,109 +191,305 @@
 
 <script>
 const flashcardsData = [
-    {t:"Project", d:"An endeavor to produce/accomplish through a unique set of interrelated tasks and an effective utilization of resources."},
-    {t:"Product", d:"Can either be a component of another item or an end item itself."},
-    {t:"Capability to perform a service", d:"Business function supporting a production or distribution."},
-    {t:"Result", d:"Refers to an output from performing project management processes and activities."},
-    {t:"Project Objective", d:"A project has a well-defined objective - an expected result or product."},
-    {t:"Triple Constraint", d:"A framework used by project managers to evaluate the competing demands of scope, time, and cost."},
-    {t:"Project Management", d:"The application of knowledge, skills, tools and techniques to project activities to meet project requirements."},
-    {t:"Project Stakeholders", d:"People involved in or affected by project activities."},
-    {t:"Project Sponsor", d:"The person who provides the direction and funding for the project."},
-    {t:"Program", d:"A group of related projects managed in a coordinated way to obtain benefits and control not available from managing them individually."},
-    {t:"Project Portfolio", d:"A collection of projects and programs that are grouped together to facilitate effective management to meet strategic business objectives."},
-    {t:"Core Knowledge Areas", d:"Four areas that lead to specific project objectives: project scope, time, cost, and quality management."},
-    {t:"Facilitating Knowledge Areas", d:"Four areas through which project objectives are achieved: human resource, communications, risk, and procurement management."},
-    {t:"Project Integration Management", d:"The ninth knowledge area that coordinates all other knowledge areas."},
-    {t:"Project Life Cycle", d:"A collection of project phases, such as concept, development, implementation, and close-out."},
-    {t:"Deliverable", d:"A product or service produced or provided as part of a project."},
-    {t:"Initiating Process Group", d:"Process where a new project or phase gets defined and authorized by management."},
-    {t:"Planning Process Group", d:"Process of establishing scope and objectives for the project work."},
-    {t:"Executing Process Group", d:"Process of integrating people and other resources to carry out the project management plan."},
-    {t:"Monitoring and Controlling Group", d:"Process of measuring and monitoring progress to ensure project objectives are met."},
-    {t:"Closing Process Group", d:"Process of formalizing acceptance of the product, service, or result and ending the project."},
-    {t:"Project Charter", d:"A document that formally recognizes the existence of a project and provides direction on the project’s objectives and management."},
-    {t:"Strategic Planning", d:"Involves determining long-term objectives by analyzing the strengths and weaknesses of an organization."},
-    {t:"SWOT Analysis", d:"Analyzing Strengths, Weaknesses, Opportunities, and Threats."},
-    {t:"Net Present Value (NPV)", d:"Method of calculating expected net monetary gain or loss by discounting all cash flows to the present point in time."},
-    {t:"Return on Investment (ROI)", d:"Result of subtracting project costs from benefits and then dividing by costs."},
-    {t:"Payback Period", d:"Amount of time it will take to recoup, in the form of net cash inflows, the total amount invested in a project."},
-    {t:"Balanced Scorecard", d:"Methodology that converts an organization’s value drivers to a series of defined metrics."},
-    {t:"Scope", d:"All of the works involved in creating the products of the project and the processes used in creating them."},
-    {t:"Work Breakdown Structure (WBS)", d:"A deliverable-oriented grouping of the work involved in a project that defines the total scope of the project."},
-    {t:"Decomposition", d:"Subdividing project deliverables into smaller pieces."},
-    {t:"WBS Dictionary", d:"Document describing detailed information about each item in the WBS."},
-    {t:"Scope Verification", d:"Involves formal acceptance of the project scope by the stakeholders."},
-    {t:"Scope Creep", d:"The tendency for project scope to keep getting bigger and bigger."},
-    {t:"Activity List", d:"A tabulation of activities to be included on a project schedule."},
-    {t:"Milestone", d:"A significant event in a project that usually has no duration."},
-    {t:"Mandatory Dependencies", d:"Inherent in the nature of the work; sometimes called hard logic."},
-    {t:"Critical Path", d:"The longest path through the network diagram and has the least amount of slack or float."},
-    {t:"Gantt Chart", d:"Standard format for displaying schedule information listing activities and dates in a calendar format."},
-    {t:"PERT Analysis", d:"Network analysis technique used to estimate project duration when there is uncertainty."},
-    {t:"Murphy's Law", d:"States that if something can go wrong, it will."},
-    {t:"Parkinson's Law", d:"States that work expands to fill the time allowed."},
-    {t:"Cost", d:"Resource sacrificed or foregone to achieve a specific objective; something given up in exchange."},
-    {t:"Direct Costs", d:"Costs that can be directly related to producing the products and services of the project."},
-    {t:"Indirect Costs", d:"Costs that are not directly related to the products but are indirectly related to performing the project."},
-    {t:"Sunk Cost", d:"Money that has been spent in the past; should not be included when deciding which projects to invest in."},
-    {t:"Learning Curve Theory", d:"States that unit cost decreases in a regular pattern as more units are produced repetitively."},
-    {t:"Rough Order of Magnitude (ROM)", d:"Estimate of cost made 3 or more years before project completion."},
-    {t:"Cost Baseline", d:"A time-phased budget that project managers use to measure and monitor cost performance."},
-    {t:"Earned Value Management (EVM)", d:"Project performance measurement technique that integrates scope, time and cost data."},
-    {t:"Planned Value (PV)", d:"Portion of approved total cost estimate planned to be spent during a given period."},
-    {t:"Actual Cost (AC)", d:"Total of direct and indirect costs incurred in accomplishing work during a given period."},
-    {t:"Earned Value (EV)", d:"An estimate of the value of the physical work actually completed."},
-    {t:"Quality", d:"The degree to which a set of inherent characteristics fulfills requirements."},
-    {t:"Conformance to Requirements", d:"Project’s processes and products meet written specifications."},
-    {t:"Fitness for Use", d:"A product can be used as it was intended."},
-    {t:"Quality Assurance", d:"Periodically evaluating overall project performance to ensure it satisfies quality standards."},
-    {t:"Pareto Analysis", d:"Identifying the vital few contributors that account for the most quality problems (80/20 rule)."},
-    {t:"Six Sigma", d:"Comprehensive system for achieving, sustaining and maximizing business success."},
-    {t:"Quality Audit", d:"Structured review of quality management activities that help identify lessons learned."},
-    {t:"Intrinsic Motivation", d:"Causes people to participate in an activity for their own enjoyment."},
-    {t:"Extrinsic Motivation", d:"Causes people to do something for a reward or to avoid a penalty."},
-    {t:"Maslow's Hierarchy of Needs", d:"States that people's behaviors are guided by a sequence of needs."},
-    {t:"Power", d:"Potential ability to influence behavior to get people to do things they would not otherwise do."},
-    {t:"Coercive Power", d:"Involves using punishment, threats, or negative approaches."},
-    {t:"Legitimate Power", d:"Getting people to do things based on a position of authority."},
-    {t:"Expert Power", d:"Using personal knowledge and expertise to influence behavior."},
-    {t:"Responsibility Assignment Matrix (RAM)", d:"Matrix that maps the work of the project in the WBS to the people responsible."},
-    {t:"Resource Leveling", d:"Technique for resolving resource conflicts by delaying tasks."},
-    {t:"Project Risk Management", d:"Art and science of identifying, analyzing, and responding to risk throughout the life of a project."},
-    {t:"Risk Utility", d:"The amount of satisfaction or pleasure received from a potential payoff."},
-    {t:"Risk-Averse", d:"Utility rises at a decreasing rate for a person who has a low tolerance for risk."},
-    {t:"Risk-Seeking", d:"Higher tolerance for risk; satisfaction increases when more payoff is at stake."},
-    {t:"Risk Register", d:"Document that contains the results of various risk management processes."},
-    {t:"Contingency Plans", d:"Predefined actions that the team will take if an identified risk event occurs."},
-    {t:"Procurement", d:"Acquiring goods and/or services from an outside source."},
-    {t:"Fixed-Price Contract", d:"Involves a fixed total price for a well-defined product or service."},
-    {t:"Cost-Reimbursable Contract", d:"Payment to the seller for direct and indirect actual costs."},
-    {t:"Statement of Work (SOW)", d:"A description of the work required for the procurement."},
-    {t:"Bidder Conference", d:"Meeting with prospective suppliers to ensure a clear, common understanding."},
-    {t:"Contract Administration", d:"Ensures that the supplier’s performance meets contractual requirements."},
-    {t:"Contract Close-out", d:"Process that includes product verification to determine if work was completed correctly."},
-    {t:"Procurement Audit", d:"Done during contract close out to identify lessons learned in the procurement process."},
-    {t:"Configuration Management", d:"Ensures that the descriptions of the project’s products are correct and complete."},
-    {t:"Change Control Board (CCB)", d:"A formal group of people responsible for approving or rejecting changes on a project."},
-    {t:"Critical Chain Scheduling", d:"A method of scheduling that considers limited resources when creating a project schedule."},
-    {t:"Fallback Plans", d:"Developed for risks that have a high impact on meeting project objectives."},
-    {t:"Request for Proposal (RFP)", d:"Used to solicit proposals from prospective sellers."},
-    {t:"Source Selection", d:"Involves evaluating bidders’ proposals and choosing the best one."},
-    {t:"Analogous Estimating", d:"Uses the actual cost of a previous, similar project as the basis for cost estimating."},
-    {t:"Bottom-up Estimating", d:"Estimating individual work items or activities and summing them to get a project total."},
-    {t:"Tuckman Model", d:"Describes stages of team development: forming, storming, norming, performing, and adjourning."},
-    {t:"External Dependencies", d:"Involve relationships between project and non-project activities."},
-    {t:"Free Slack", d:"Amount of time an activity can be delayed without delaying the early start of successors."},
-    {t:"Cost of Quality", d:"The cost of conformance plus the cost of nonconformance."},
-    {t:"Standard", d:"A document established by an authority, custom, or general consent as a model."},
-    {t:"Portfolio Management", d:"Centralized management of one or more portfolios."},
-    {t:"Activity Attributes", d:"Provide more schedule-related information about each activity."},
-    {t:"Burst", d:"A single node followed by two or more activities."},
-    {t:"Merge", d:"Two or more nodes preceding a single node."},
-    {t:"Cash Flow Analysis", d:"Method for determining the estimated annual costs and benefits for a project."},
-    {t:"Work Package", d:"A task at the lowest level of the WBS."},
-    {t:"Project Manager", d:"The person responsible for ensuring the project is planned and executed with overall responsibility."}
+
+{t:"Project", d:"an endeavor to produce/accomplish through a unique set of interrelated tasks and effective utilization of resources; begins when a need, problem, or opportunity is identified and ends when the project objectives have been achieved."},
+
+{t:"Product", d:"can either be a component of another item or an end item itself."},
+
+{t:"Capability to perform a service", d:"a business function supporting production or distribution."},
+
+{t:"Result", d:"an output from performing project management processes and activities."},
+
+{t:"Project Characteristics", d:"projects have a unique purpose, are temporary, developed using progressive elaboration, require resources from various areas, have a primary customer or sponsor, and involve uncertainty."},
+
+{t:"Triple Constraint", d:"framework of project scope, time, and cost that determines project success."},
+
+{t:"Project Management", d:"the application of knowledge, skills, tools, and techniques to project activities to meet project requirements."},
+
+{t:"Stakeholders", d:"people involved in or affected by project activities including project sponsor, team, support staff, customers, users, suppliers, and opponents."},
+
+{t:"Core Knowledge Areas", d:"project scope management, time management, cost management, and quality management."},
+
+{t:"Facilitating Knowledge Areas", d:"human resource management, communications management, risk management, and procurement management."},
+
+{t:"Project Success Criteria", d:"project meets scope, time, and cost goals, satisfies customer or sponsor, and achieves its main objectives."},
+
+{t:"Portfolio", d:"a collection of projects, programs, and other work grouped together to facilitate effective management and achieve strategic business objectives."},
+
+{t:"Portfolio Management", d:"centralized management of portfolios including identifying, prioritizing, authorizing, managing, and controlling projects and programs."},
+
+{t:"Program", d:"a group of related projects managed in a coordinated way to obtain benefits not available from managing them individually."},
+
+{t:"Program Management", d:"coordinated management of a program to achieve strategic objectives and benefits."},
+
+{t:"Project Manager", d:"person responsible for planning, organizing, integrating, managing, communicating, and ensuring project objectives for scope, cost, and time are met."},
+
+{t:"Project Management Skills", d:"skills involving business understanding, organization, communication, finance, and human resources needed to run a project."},
+
+{t:"People Skills", d:"ability to motivate people, resolve conflicts, use persuasion, and manage team relationships."},
+
+{t:"Integration Skills", d:"ability to integrate project phases including planning, execution, reporting, and management."},
+
+{t:"Technical Skills", d:"technical expertise needed to identify problems and understand the work performed by the project team."},
+
+{t:"Project Life Cycle", d:"a collection of project phases identifying activities performed, outputs produced, people involved, and management control."},
+
+{t:"Project Phases", d:"logically related activities culminating in a major deliverable such as concept, development, implementation, and close-out."},
+
+{t:"Concept Phase", d:"initial phase where the project is described, summary plan created, and preliminary cost estimate developed."},
+
+{t:"Development Phase", d:"phase where detailed project plans, accurate cost estimates, and a more thorough WBS are created."},
+
+{t:"Implementation Phase", d:"phase where the required work is performed and deliverables are produced."},
+
+{t:"Close-out Phase", d:"phase where work is completed, customer acceptance is obtained, and lessons learned are documented."},
+
+{t:"Systems Development Life Cycle (SDLC)", d:"framework describing phases involved in developing and maintaining information systems."},
+
+{t:"Predictive Life Cycle", d:"life cycle where project scope, schedule, and cost can be clearly defined early."},
+
+{t:"Adaptive Life Cycle", d:"approach where requirements evolve and cannot be predicted early in the project."},
+
+{t:"Structural Frame", d:"organizational perspective focusing on roles, responsibilities, and structure."},
+
+{t:"Human Resources Frame", d:"organizational perspective focusing on the needs of people and relationships."},
+
+{t:"Political Frame", d:"organizational perspective focusing on competition, power, and conflict among groups."},
+
+{t:"Symbolic Frame", d:"organizational perspective focusing on culture, symbols, and meaning of events."},
+
+{t:"Functional Organization", d:"structure where staff are grouped by functional specialties."},
+
+{t:"Project Organization", d:"structure designed specifically to execute projects."},
+
+{t:"Matrix Organization", d:"structure combining functional and project structures."},
+
+{t:"Process", d:"set of interrelated actions performed to achieve a specific product, service, or result."},
+
+{t:"Initiating Process Group", d:"process group where a project or phase is defined and authorized."},
+
+{t:"Planning Process Group", d:"process group establishing scope, objectives, and course of action."},
+
+{t:"Executing Process Group", d:"process group coordinating people and resources to carry out the project plan."},
+
+{t:"Monitoring and Controlling Process Group", d:"process group tracking, reviewing, and regulating project progress."},
+
+{t:"Closing Process Group", d:"process group formalizing acceptance and ending the project."},
+
+{t:"Scope", d:"all the work involved in creating project deliverables and processes used to produce them."},
+
+{t:"Work Breakdown Structure (WBS)", d:"deliverable-oriented grouping of project work defining total project scope."},
+
+{t:"Work Package", d:"lowest level of the WBS representing a task that can be scheduled and estimated."},
+
+{t:"Decomposition", d:"subdividing project deliverables into smaller manageable components."},
+
+{t:"Scope Creep", d:"uncontrolled expansion of project scope without adjustments to time, cost, or resources."},
+
+{t:"Gantt Chart", d:"bar chart used to display project schedule information."},
+
+{t:"Critical Path", d:"longest path through the project schedule determining the earliest completion date."},
+
+{t:"PERT Analysis", d:"network analysis technique used when project duration is uncertain."},
+
+{t:"Resource Leveling", d:"technique for resolving resource conflicts by delaying tasks."},
+
+{t:"Critical Chain Scheduling", d:"scheduling method that considers limited resources."},
+
+{t:"Cost", d:"resource sacrificed or foregone to achieve a specific objective."},
+
+{t:"Direct Costs", d:"costs directly related to producing project products and services."},
+
+{t:"Indirect Costs", d:"costs not directly related to products but necessary to support the project."},
+
+{t:"Sunk Cost", d:"money already spent that cannot be recovered."},
+
+{t:"Learning Curve Theory", d:"unit cost decreases as more units are produced repetitively."},
+
+{t:"Rough Order of Magnitude (ROM)", d:"cost estimate made early in the project with high uncertainty."},
+
+{t:"Cost Baseline", d:"approved time-phased project budget used to measure cost performance."},
+
+{t:"Earned Value Management (EVM)", d:"performance measurement integrating scope, schedule, and cost."},
+
+{t:"Planned Value (PV)", d:"authorized budget assigned to scheduled work."},
+
+{t:"Actual Cost (AC)", d:"total cost incurred for work performed."},
+
+{t:"Earned Value (EV)", d:"value of work actually completed."},
+
+{t:"Quality", d:"degree to which a set of inherent characteristics fulfills requirements."},
+
+{t:"Quality Assurance", d:"evaluating overall project performance to ensure quality standards are met."},
+
+{t:"Pareto Analysis", d:"technique identifying the vital few causes responsible for most problems."},
+
+{t:"Six Sigma", d:"comprehensive system for achieving and sustaining business success through quality improvement."},
+
+{t:"Histogram", d:"bar chart showing frequency distribution of data."},
+
+{t:"Control Chart", d:"graphical display of process performance over time."},
+
+{t:"Scatter Diagram", d:"diagram showing relationship between two variables."},
+
+{t:"Cause and Effect Diagram", d:"diagram identifying potential causes of quality problems."},
+
+{t:"Flowchart", d:"diagram showing relationships between system elements."},
+
+{t:"Intrinsic Motivation", d:"motivation driven by personal satisfaction."},
+
+{t:"Extrinsic Motivation", d:"motivation driven by rewards or avoidance of punishment."},
+
+{t:"Risk Management", d:"process of identifying, analyzing, and responding to project risks."},
+
+{t:"Risk Register", d:"document containing identified risks and their analysis."},
+
+{t:"Contingency Plans", d:"predefined actions taken when identified risks occur."},
+
+{t:"Fallback Plans", d:"alternative plans used when contingency plans fail."},
+
+{t:"Murphy's Law", d:"if something can go wrong, it will."},
+
+{t:"Parkinson's Law", d:"work expands to fill the time available."},
+
+{t:"Procurement", d:"acquiring goods or services from outside the organization."},
+
+{t:"Fixed Price Contract", d:"contract with a fixed total price for a product or service."},
+
+{t:"Cost Reimbursable Contract", d:"contract where seller is reimbursed for actual costs."},
+
+{t:"Statement of Work (SOW)", d:"description of work required for procurement."},
+
+{t:"Request for Proposal (RFP)", d:"document used to solicit proposals from sellers."},
+
+{t:"Bidder Conference", d:"meeting with potential sellers to clarify procurement requirements."},
+
+{t:"Source Selection", d:"process of evaluating proposals and selecting a supplier."},
+
+{t:"Contract Administration", d:"process ensuring seller performance meets contractual requirements."},
+
+{t:"Contract Close-out", d:"process verifying that work is completed and contract requirements satisfied."},
+
+{t:"Responsibility Assignment Matrix (RAM)", d:"matrix mapping project work to responsible individuals."},
+
+{t:"Configuration Management", d:"process ensuring project product descriptions are correct and complete."},
+
+{t:"Change Control Board (CCB)", d:"group responsible for approving or rejecting project changes."},
+
+{t:"Free Slack", d:"time an activity can be delayed without delaying successor activities."},
+
+{t:"Burst", d:"single node followed by two or more activities in a network diagram."},
+
+{t:"Merge", d:"two or more nodes preceding a single node in a network diagram."},
+
+{t:"Cash Flow Analysis", d:"method for determining estimated annual costs and benefits of a project."},
+
+{t:"Ishikawa Diagram", d:"another name for the cause and effect diagram used to identify possible causes of quality problems."},
+
+{t:"Plan Quality Management", d:"process of identifying quality requirements and documenting how the project will demonstrate compliance with quality standards."},
+
+{t:"Manage Quality", d:"process of translating the quality management plan into executable quality activities that incorporate the organization’s quality policies."},
+
+{t:"Control Quality", d:"process of monitoring and recording results of executing quality activities to assess performance and ensure project outputs are correct."},
+
+{t:"Cost Variance (CV)", d:"earned value minus actual cost which measures cost performance of a project."},
+
+{t:"Schedule Variance (SV)", d:"earned value minus planned value which measures schedule performance."},
+
+{t:"Cost Performance Index (CPI)", d:"earned value divided by actual cost which measures cost efficiency of budgeted resources."},
+
+{t:"Schedule Performance Index (SPI)", d:"earned value divided by planned value which measures schedule efficiency."},
+
+{t:"Estimate at Completion (EAC)", d:"forecast of the most likely total project cost based on project performance."},
+
+{t:"Estimate to Complete (ETC)", d:"expected cost required to finish all remaining project work."},
+
+{t:"Variance at Completion (VAC)", d:"difference between budget at completion and estimate at completion."},
+
+{t:"Benchmarking", d:"generating ideas for quality improvements by comparing project practices or product characteristics to those of other projects."},
+
+{t:"Quality Planning Tools", d:"tools used in planning quality such as cost-benefit analysis, benchmarking, design of experiments, and flowcharts."},
+
+{t:"Quality Metrics", d:"specific measurements used to determine whether project results meet quality standards."},
+
+{t:"Quality Checklist", d:"structured tool used to verify that required steps in a process have been performed."},
+
+{t:"Design of Experiments", d:"statistical method that helps identify which variables have the most influence on overall project outcomes."},
+
+{t:"Statistical Sampling", d:"method used to select part of a population of interest for inspection."},
+
+{t:"Prevention Cost", d:"costs associated with preventing defects in products or services."},
+
+{t:"Appraisal Cost", d:"costs associated with evaluating processes and outputs to ensure quality."},
+
+{t:"Failure Cost", d:"costs incurred when products fail to meet quality standards."},
+
+{t:"Internal Failure Cost", d:"costs resulting from defects found before the product is delivered to the customer."},
+
+{t:"External Failure Cost", d:"costs resulting from defects found after the product is delivered to the customer."},
+
+{t:"Team Development", d:"improving competencies, interaction, and overall team environment to enhance project performance."},
+
+{t:"Tuckman Model", d:"team development stages consisting of forming, storming, norming, performing, and adjourning."},
+
+{t:"Power", d:"potential ability to influence behavior to get people to do things they would not otherwise do."},
+
+{t:"Coercive Power", d:"power based on punishment, threats, or negative approaches."},
+
+{t:"Legitimate Power", d:"power based on formal authority or position."},
+
+{t:"Expert Power", d:"power based on personal knowledge and expertise."},
+
+{t:"Referent Power", d:"power based on personal charisma or respect from others."},
+
+{t:"Reward Power", d:"power based on the ability to reward others."},
+
+{t:"Deliverable", d:"a product or service produced as part of a project."},
+
+{t:"Activity List", d:"a tabulation of activities to be included on a project schedule."},
+
+{t:"Activity Attributes", d:"provide schedule-related information about each activity."},
+
+{t:"Milestone", d:"a significant event in a project that usually has no duration."},
+
+{t:"Mandatory Dependencies", d:"dependencies inherent in the nature of the work also known as hard logic."},
+
+{t:"External Dependencies", d:"dependencies involving relationships between project and non-project activities."},
+
+{t:"Total Slack", d:"amount of time an activity can be delayed without delaying the project finish date."},
+
+{t:"Network Diagram", d:"a schematic display of project activities and their logical relationships."},
+
+{t:"Critical Path Method", d:"network diagramming technique used to predict total project duration."},
+
+{t:"Analogous Estimating", d:"estimating technique that uses actual cost of a previous similar project."},
+
+{t:"Bottom-Up Estimating", d:"estimating technique that involves estimating individual work items and summing them."},
+
+{t:"Parametric Estimating", d:"estimating technique using statistical relationship between variables."},
+
+{t:"Three Point Estimate", d:"estimating technique using optimistic, pessimistic, and most likely estimates."},
+
+{t:"Balanced Scorecard", d:"methodology converting organizational value drivers into defined metrics."},
+
+{t:"Net Present Value (NPV)", d:"method of calculating expected monetary gain or loss by discounting future cash flows."},
+
+{t:"Return on Investment (ROI)", d:"ratio of benefits to costs used to evaluate project profitability."},
+
+{t:"Payback Period", d:"amount of time required to recover the investment cost of a project."},
+
+{t:"Cost of Quality", d:"cost of conformance plus cost of nonconformance."},
+
+{t:"Risk Utility", d:"amount of satisfaction received from a potential payoff."},
+
+{t:"Risk-Averse", d:"person with low tolerance for risk."},
+
+{t:"Risk-Seeking", d:"person with high tolerance for risk."},
+
+{t:"Procurement Audit", d:"review conducted during contract closeout to identify lessons learned."},
+
+{t:"Maslow's Hierarchy of Needs", d:"theory stating human behavior is guided by a sequence of needs."}
+
 ];
 
 let currentStack = [];
