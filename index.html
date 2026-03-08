@@ -493,7 +493,7 @@ const flashcardsData = [
 ];
 
 let currentStack = [];
-let mistakeStack = [];
+let reviewQueue = [];
 let currentPos = 0;
 let points = 0;
 
@@ -520,7 +520,7 @@ function showNext() {
     document.getElementById('idx-now').textContent = currentPos + 1;
     document.getElementById('idx-total').textContent = currentStack.length;
     
-    const pct = (currentPos / currentStack.length) * 100;
+    const pct = ((currentPos + 1) / currentStack.length) * 100;
     document.getElementById('progress-bar').style.width = pct + "%";
 }
 
@@ -529,20 +529,46 @@ function doFlip() {
 }
 
 function submitResult(isOk) {
-    if (!isOk) {
-        if (!mistakeStack.includes(currentStack[currentPos])) {
-            mistakeStack.push(currentStack[currentPos]);
-        }
-    } else {
+
+    const card = currentStack[currentPos];
+
+    if (isOk) {
         points++;
+
+        // correct cards babalik later para ma reinforce
+        if (Math.random() < 0.3) {
+            reviewQueue.push(card);
+        }
+
+    } else {
+
+        // incorrect cards lalabas ulit agad
+        reviewQueue.unshift(card);
     }
 
-    if (currentPos < currentStack.length - 1) {
-        currentPos++;
-        showNext();
-    } else {
-        finishGame();
+    currentPos++;
+
+    if (currentPos >= currentStack.length) {
+
+        if (reviewQueue.length > 0) {
+
+            currentStack = reviewQueue;
+            reviewQueue = [];
+            currentPos = 0;
+            randomize(currentStack);
+
+            const tag = document.getElementById('status-tag');
+            tag.textContent = "Reinforcement Round";
+            tag.style.color = "var(--secondary)";
+
+        } else {
+
+            finishGame();
+            return;
+        }
     }
+
+    showNext();
 }
 
 function finishGame() {
