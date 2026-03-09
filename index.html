@@ -3,13 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PM Pro Mastery - Final Edition</title>
+    <title>PM Pro Mastery - Select Mode</title>
     <style>
         :root {
             --primary: #0038a8; 
             --accent: #ff9f43;
-            --success: #27ae60;
-            --danger: #e74c3c;
             --bg: #f1f3f5;
         }
 
@@ -23,320 +21,77 @@
             min-height: 100vh;
         }
 
-        .app-container {
+        .menu-container {
             width: 90%;
-            max-width: 650px;
+            max-width: 500px;
             background: white;
-            padding: 25px;
+            padding: 40px 20px;
             border-radius: 20px;
             box-shadow: 0 10px 30px rgba(0,0,0,0.1);
             text-align: center;
-            position: relative;
         }
 
-        /* --- MENU SCREEN --- */
-        #menu-screen { padding: 40px 20px; }
-        .menu-title { color: var(--primary); font-size: 2.2rem; margin: 0 0 10px 0; }
-        .menu-subtitle { color: #666; margin-bottom: 30px; }
-        .menu-grid { display: grid; grid-template-columns: 1fr; gap: 15px; }
-        
-        .btn-menu {
-            padding: 20px;
-            font-size: 1.1rem;
-            font-weight: bold;
-            border: none;
-            border-radius: 15px;
-            cursor: pointer;
-            color: white;
-            transition: 0.2s;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+        h1 {
+            color: var(--primary);
+            margin-bottom: 10px;
+            font-size: 2rem;
+        }
+
+        p {
+            color: #666;
+            margin-bottom: 30px;
+        }
+
+        .button-group {
+            display: grid;
+            grid-template-columns: 1fr;
             gap: 15px;
         }
-        .btn-menu:hover { transform: translateY(-3px); filter: brightness(1.1); }
 
-        /* --- GAME INTERFACE --- */
-        .home-btn {
-            position: absolute;
-            top: 20px;
-            left: 20px;
-            background: #eee;
-            border: none;
-            padding: 6px 12px;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 0.8rem;
+        .mode-btn {
+            padding: 20px;
+            font-size: 1.2rem;
             font-weight: bold;
-        }
-
-        .progress-container { margin-top: 25px; margin-bottom: 15px; }
-        .progress-bar {
-            height: 10px;
-            background: #e9ecef;
-            border-radius: 10px;
-            overflow: hidden;
-        }
-        .progress-fill {
-            height: 100%;
-            background: var(--success);
-            width: 0%;
-            transition: 0.4s;
-        }
-
-        #question-label { font-size: 0.9rem; color: #888; font-weight: bold; text-transform: uppercase; }
-        #question-text {
-            font-weight: 600;
-            font-size: 1.1rem;
-            margin: 10px 0 20px 0;
-            color: #2d3436;
-            min-height: 80px;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            color: white;
+            transition: transform 0.2s, box-shadow 0.2s;
+            text-decoration: none; /* Para sa <a> tag */
             display: flex;
             align-items: center;
             justify-content: center;
+            gap: 10px;
         }
 
-        /* Flashcard View */
-        .flashcard-box { perspective: 1000px; height: 280px; margin-bottom: 20px; }
-        .inner-card {
-            position: relative; width: 100%; height: 100%;
-            transition: transform 0.6s; transform-style: preserve-3d; cursor: pointer;
-        }
-        .inner-card.flipped { transform: rotateY(180deg); }
-        .face {
-            position: absolute; width: 100%; height: 100%;
-            backface-visibility: hidden; display: flex;
-            align-items: center; justify-content: center;
-            padding: 30px; box-sizing: border-box; border-radius: 15px;
-            border: 2px solid #eee; font-size: 1.1rem; background: white;
-        }
-        .back {
-            background: var(--primary); color: white;
-            transform: rotateY(180deg); font-weight: bold; font-size: 1.4rem;
+        .mode-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
         }
 
-        /* Quiz View */
-        .quiz-container { display: grid; grid-template-columns: 1fr; gap: 10px; margin-bottom: 20px; }
-        .option-btn {
-            padding: 15px; border: 2px solid #eee; border-radius: 12px;
-            background: white; cursor: pointer; font-size: 1rem; text-align: left;
-            transition: 0.2s;
-        }
-        .option-btn:hover { border-color: var(--primary); }
-        .option-btn.correct { background: var(--success) !important; color: white; border-color: var(--success); }
-        .option-btn.wrong { background: var(--danger) !important; color: white; border-color: var(--danger); }
+        .flashcard-btn { background-color: var(--primary); }
+        .quiz-btn { background-color: var(--accent); }
 
-        /* Manual Controls */
-        .btn-action { padding: 15px; border: none; border-radius: 10px; color: white; font-weight: bold; cursor: pointer; }
-
-        .mode-footer {
-            margin-top: 25px; padding-top: 20px; border-top: 2px dashed #eee;
-        }
-        .mode-selector { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-        .mode-btn {
-            padding: 10px; border: 2px solid #ddd; border-radius: 8px;
-            background: #f8f9fa; cursor: pointer; font-weight: bold; color: #666;
-        }
-        .mode-btn.active { background: var(--accent); color: white; border-color: var(--accent); }
-
-        .hidden { display: none !important; }
+        .icon { font-size: 1.5rem; }
     </style>
 </head>
 <body>
 
-<div class="app-container" id="menu-screen">
-    <h1 class="menu-title">PM Pro Mastery</h1>
-    <p class="menu-subtitle">Challenge your Project Management knowledge!</p>
-    <div class="menu-grid">
-        <button class="btn-menu" style="background: var(--primary);" onclick="startApp('flash')">
-            <span>🗂️</span> Flashcards Mode
-        </button>
-        <button class="btn-menu" style="background: var(--accent);" onclick="startApp('quiz')">
-            <span>📝</span> Multiple Choice Quiz
-        </button>
+<div class="menu-container">
+    <h1>PM Pro Mastery</h1>
+    <p>Piliin ang mode ng iyong pag-aaral:</p>
+
+    <div class="button-group">
+        <a href="flashcards.html" class="mode-btn flashcard-btn">
+            <span class="icon">🗂️</span> Flashcards Mode
+        </a>
+
+        <a href="quiz.html" class="mode-btn quiz-btn">
+            <span class="icon">📝</span> Multiple Choice Quiz
+        </a>
     </div>
 </div>
 
-<div class="app-container hidden" id="main-app">
-    <button class="home-btn" onclick="goHome()">🏠 Menu</button>
-    
-    <div class="progress-container">
-        <div style="display: flex; justify-content: space-between; font-size: 0.85rem; margin-bottom: 5px;">
-            <span id="card-count">Remaining: --</span>
-            <span id="mastery-text" style="color: var(--success); font-weight: bold;">Mastery: 0%</span>
-        </div>
-        <div class="progress-bar"><div class="progress-fill" id="progress-fill"></div></div>
-    </div>
-
-    <div id="question-label">Definition</div>
-    <div id="question-text">...</div>
-
-    <div id="flashcard-view" class="flashcard-box" onclick="doFlip()">
-        <div class="inner-card" id="inner-card">
-            <div class="face front" id="flash-q">...</div>
-            <div class="face back" id="flash-a">...</div>
-        </div>
-    </div>
-
-    <div id="quiz-view" class="quiz-container hidden"></div>
-
-    <div id="flash-controls" style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
-        <button class="btn-action" style="background: var(--danger);" onclick="handleResult(false)">✕ Incorrect</button>
-        <button class="btn-action" style="background: var(--success);" onclick="handleResult(true)">✓ Correct</button>
-    </div>
-
-    <div class="mode-footer">
-        <div class="mode-selector">
-            <button class="mode-btn" id="mode-flash" onclick="setMode('flash')">FLASHCARDS</button>
-            <button class="mode-btn" id="mode-quiz" onclick="setMode('quiz')">QUIZ MODE</button>
-        </div>
-    </div>
-</div>
-
-<div class="app-container hidden" id="end-screen">
-    <h1 style="color: var(--success);">🏆 Goal Achieved!</h1>
-    <p>You've successfully reviewed all terms.</p>
-    <button class="btn-action" style="background: var(--primary); width: 100%;" onclick="goHome()">Back to Menu</button>
-</div>
-
-<script>
-const flashcardsData = [
-    {t:"Project", d:"an endeavor to produce/accomplish through a unique set of interrelated tasks and effective utilization of resources."},
-    {t:"Product", d:"can either be a component of another item or an end item itself."},
-    {t:"Capability to perform a service", d:"a business function supporting production or distribution."},
-    {t:"Result", d:"an output from performing project management processes and activities."},
-    {t:"Triple Constraint", d:"framework of project scope, time, and cost that determines project success."},
-    {t:"Project Management", d:"the application of knowledge, skills, tools, and techniques to project activities."},
-    {t:"Stakeholders", d:"people involved in or affected by project activities including project sponsor, team, and customers."},
-    {t:"Portfolio", d:"a collection of projects, programs, and other work grouped together to achieve strategic objectives."},
-    {t:"Program", d:"a group of related projects managed in a coordinated way to obtain specific benefits."},
-    {t:"Project Manager", d:"person responsible for planning, organizing, and ensuring project objectives are met."},
-    {t:"Project Life Cycle", d:"a collection of project phases identifying activities, outputs, and management control."},
-    {t:"Concept Phase", d:"initial phase where the project is described and a summary plan is created."},
-    {t:"Implementation Phase", d:"phase where the required work is performed and deliverables are produced."},
-    {t:"Scope Creep", d:"uncontrolled expansion of project scope without adjustments to time or cost."},
-    {t:"Critical Path", d:"longest path through the project schedule determining the earliest completion date."},
-    {t:"Sunk Cost", d:"money already spent that cannot be recovered."},
-    {t:"Earned Value Management (EVM)", d:"performance measurement integrating scope, schedule, and cost."},
-    {t:"Quality Assurance", d:"evaluating overall project performance to ensure quality standards are met."},
-    {t:"Pareto Analysis", d:"technique identifying the vital few causes responsible for most problems."},
-    {t:"Risk Management", d:"process of identifying, analyzing, and responding to project risks."},
-    {t:"Fixed Price Contract", d:"contract with a fixed total price for a product or service."},
-    {t:"WBS", d:"deliverable-oriented grouping of project work defining total project scope."},
-    {t:"Milestone", d:"a significant event in a project that usually has no duration."},
-    {t:"Gantt Chart", d:"bar chart used to display project schedule information."},
-    {t:"Resource Leveling", d:"technique for resolving resource conflicts by delaying tasks."},
-    {t:"Cost Baseline", d:"approved time-phased project budget used to measure performance."},
-    {t:"Six Sigma", d:"system for achieving and sustaining business success through quality improvement."},
-    {t:"Murphy's Law", d:"if something can go wrong, it will."},
-    {t:"Parkinson's Law", d:"work expands to fill the time available."},
-    {t:"Tuckman Model", d:"stages of team development: forming, storming, norming, performing, adjourning."},
-    {t:"Expert Power", d:"power based on personal knowledge and expertise."},
-    {t:"Referent Power", d:"power based on personal charisma or respect from others."},
-    {t:"Net Present Value (NPV)", d:"calculating expected monetary gain/loss by discounting future cash flows."}
-    // Note: Dagdagan mo na lang dito yung iba pang terms gamit ang {t:"Term", d:"Def"} format.
-];
-
-let workingDeck = [];
-let currentMode = 'flash';
-let masteredCount = 0;
-let isProcessing = false;
-
-function shuffle(arr) {
-    for (let i = arr.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [arr[i], arr[j]] = [arr[j], arr[i]];
-    }
-}
-
-function startApp(mode) {
-    document.getElementById('menu-screen').classList.add('hidden');
-    document.getElementById('main-app').classList.remove('hidden');
-    workingDeck = [...flashcardsData];
-    shuffle(workingDeck);
-    masteredCount = 0;
-    setMode(mode);
-}
-
-function goHome() { location.reload(); }
-
-function setMode(mode) {
-    currentMode = mode;
-    document.getElementById('mode-flash').classList.toggle('active', mode === 'flash');
-    document.getElementById('mode-quiz').classList.toggle('active', mode === 'quiz');
-    
-    document.getElementById('flashcard-view').classList.toggle('hidden', mode === 'quiz');
-    document.getElementById('flash-controls').classList.toggle('hidden', mode === 'quiz');
-    document.getElementById('quiz-view').classList.toggle('hidden', mode === 'flash');
-    
-    renderCard();
-}
-
-function renderCard() {
-    if (workingDeck.length === 0) {
-        document.getElementById('main-app').classList.add('hidden');
-        document.getElementById('end-screen').classList.remove('hidden');
-        return;
-    }
-
-    const card = workingDeck[0];
-    const progress = (masteredCount / flashcardsData.length) * 100;
-    
-    document.getElementById('card-count').textContent = `Remaining: ${workingDeck.length}`;
-    document.getElementById('mastery-text').textContent = `Mastery: ${Math.round(progress)}%`;
-    document.getElementById('progress-fill').style.width = progress + "%";
-
-    if (currentMode === 'flash') {
-        document.getElementById('question-label').textContent = "Term Category";
-        document.getElementById('question-text').textContent = "Tap the card to reveal the term";
-        document.getElementById('inner-card').classList.remove('flipped');
-        document.getElementById('flash-q').textContent = card.d;
-        document.getElementById('flash-a').textContent = card.t;
-    } else {
-        document.getElementById('question-label').textContent = "Question";
-        document.getElementById('question-text').textContent = card.d;
-        generateQuizOptions(card.t);
-    }
-}
-
-function generateQuizOptions(correctTerm) {
-    const quizContainer = document.getElementById('quiz-view');
-    quizContainer.innerHTML = '';
-    
-    let others = flashcardsData.map(c => c.t).filter(t => t !== correctTerm);
-    shuffle(others);
-    let options = [correctTerm, ...others.slice(0, 3)];
-    shuffle(options);
-
-    options.forEach(opt => {
-        const btn = document.createElement('button');
-        btn.className = 'option-btn';
-        btn.textContent = opt;
-        btn.onclick = () => {
-            if (isProcessing) return;
-            isProcessing = true;
-            if (opt === correctTerm) {
-                btn.classList.add('correct');
-                setTimeout(() => { handleResult(true); isProcessing = false; }, 600);
-            } else {
-                btn.classList.add('wrong');
-                setTimeout(() => { handleResult(false); isProcessing = false; }, 1000);
-            }
-        };
-        quizContainer.appendChild(btn);
-    });
-}
-
-function doFlip() { 
-    if(currentMode === 'flash') document.getElementById('inner-card').classList.toggle('flipped'); 
-}
-
-function handleResult(isCorrect) {
-    const card = workingDeck.shift();
-    if (isCorrect) masteredCount++;
-    else workingDeck.splice(Math.min(workingDeck.length, 5), 0, card);
-    renderCard();
-}
-</script>
 </body>
-</html>
+</html> 
+
