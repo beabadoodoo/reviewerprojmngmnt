@@ -3,401 +3,340 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PM Pro Flashcards - Mastery Mode</title>
+    <title>PM Pro Mastery - Final Edition</title>
     <style>
         :root {
             --primary: #0038a8; 
-            --secondary: #ffd700; 
+            --accent: #ff9f43;
             --success: #27ae60;
             --danger: #e74c3c;
-            --bg: #f8f9fa;
+            --bg: #f1f3f5;
         }
 
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Segoe UI', Roboto, sans-serif;
             background-color: var(--bg);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            min-height: 100vh;
             margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
         }
 
         .app-container {
-            width: 100%;
+            width: 90%;
             max-width: 650px;
-            padding: 20px;
+            background: white;
+            padding: 25px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
             text-align: center;
+            position: relative;
         }
 
-        .progress-wrapper {
-            width: 100%;
-            background: #e0e0e0;
+        /* --- MENU SCREEN --- */
+        #menu-screen { padding: 40px 20px; }
+        .menu-title { color: var(--primary); font-size: 2.2rem; margin: 0 0 10px 0; }
+        .menu-subtitle { color: #666; margin-bottom: 30px; }
+        .menu-grid { display: grid; grid-template-columns: 1fr; gap: 15px; }
+        
+        .btn-menu {
+            padding: 20px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            border: none;
+            border-radius: 15px;
+            cursor: pointer;
+            color: white;
+            transition: 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+        }
+        .btn-menu:hover { transform: translateY(-3px); filter: brightness(1.1); }
+
+        /* --- GAME INTERFACE --- */
+        .home-btn {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background: #eee;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+
+        .progress-container { margin-top: 25px; margin-bottom: 15px; }
+        .progress-bar {
             height: 10px;
-            border-radius: 5px;
-            margin-bottom: 25px;
+            background: #e9ecef;
+            border-radius: 10px;
             overflow: hidden;
         }
-
         .progress-fill {
             height: 100%;
             background: var(--success);
             width: 0%;
-            border-radius: 5px;
-            transition: width 0.4s ease-out;
+            transition: 0.4s;
         }
 
-        .stats-row {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 12px;
+        #question-label { font-size: 0.9rem; color: #888; font-weight: bold; text-transform: uppercase; }
+        #question-text {
             font-weight: 600;
-            color: #444;
-        }
-
-        .flashcard-box {
-            perspective: 1500px;
-            width: 100%;
-            height: 380px;
-            cursor: pointer;
-        }
-
-        .inner-card {
-            width: 100%;
-            height: 100%;
-            position: relative;
-            transition: transform 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            transform-style: preserve-3d;
-        }
-
-        .inner-card.flipped {
-            transform: rotateY(180deg);
-        }
-
-        .face {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            backface-visibility: hidden;
+            font-size: 1.1rem;
+            margin: 10px 0 20px 0;
+            color: #2d3436;
+            min-height: 80px;
             display: flex;
             align-items: center;
             justify-content: center;
-            padding: 40px;
-            box-sizing: border-box;
-            border-radius: 25px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
         }
 
-        .front {
-            background: white;
-            color: #2d3436;
-            border: 2px solid #eee;
-            font-size: 1.2rem;
-            line-height: 1.6;
+        /* Flashcard View */
+        .flashcard-box { perspective: 1000px; height: 280px; margin-bottom: 20px; }
+        .inner-card {
+            position: relative; width: 100%; height: 100%;
+            transition: transform 0.6s; transform-style: preserve-3d; cursor: pointer;
         }
-
+        .inner-card.flipped { transform: rotateY(180deg); }
+        .face {
+            position: absolute; width: 100%; height: 100%;
+            backface-visibility: hidden; display: flex;
+            align-items: center; justify-content: center;
+            padding: 30px; box-sizing: border-box; border-radius: 15px;
+            border: 2px solid #eee; font-size: 1.1rem; background: white;
+        }
         .back {
-            background: var(--primary);
-            color: white;
-            transform: rotateY(180deg);
-            font-weight: bold;
-            font-size: 1.8rem;
+            background: var(--primary); color: white;
+            transform: rotateY(180deg); font-weight: bold; font-size: 1.4rem;
         }
 
-        .button-group {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 20px;
-            margin-top: 35px;
+        /* Quiz View */
+        .quiz-container { display: grid; grid-template-columns: 1fr; gap: 10px; margin-bottom: 20px; }
+        .option-btn {
+            padding: 15px; border: 2px solid #eee; border-radius: 12px;
+            background: white; cursor: pointer; font-size: 1rem; text-align: left;
+            transition: 0.2s;
         }
+        .option-btn:hover { border-color: var(--primary); }
+        .option-btn.correct { background: var(--success) !important; color: white; border-color: var(--success); }
+        .option-btn.wrong { background: var(--danger) !important; color: white; border-color: var(--danger); }
 
-        .btn {
-            padding: 18px;
-            border: none;
-            border-radius: 15px;
-            font-size: 1.1rem;
-            font-weight: 700;
-            cursor: pointer;
-            color: white;
-            transition: all 0.2s ease;
+        /* Manual Controls */
+        .btn-action { padding: 15px; border: none; border-radius: 10px; color: white; font-weight: bold; cursor: pointer; }
+
+        .mode-footer {
+            margin-top: 25px; padding-top: 20px; border-top: 2px dashed #eee;
         }
-
-        .btn:active { transform: scale(0.96); }
-        .btn-incorrect { background: var(--danger); }
-        .btn-correct { background: var(--success); }
-
-        .screen-hidden { display: none !important; }
-        
-        kbd {
-            background: #fff;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            padding: 2px 6px;
-            font-family: monospace;
+        .mode-selector { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        .mode-btn {
+            padding: 10px; border: 2px solid #ddd; border-radius: 8px;
+            background: #f8f9fa; cursor: pointer; font-weight: bold; color: #666;
         }
+        .mode-btn.active { background: var(--accent); color: white; border-color: var(--accent); }
+
+        .hidden { display: none !important; }
     </style>
 </head>
 <body>
 
-<div class="app-container" id="game-view">
-    <div class="stats-row">
-        <span>Cards Left: <span id="cards-left">--</span></span>
-        <span id="status-tag" style="color: var(--primary);">Mastery Mode</span>
-    </div>
-    
-    <div class="progress-wrapper">
-        <div class="progress-fill" id="progress-bar"></div>
-    </div>
-
-    <div class="flashcard-box" onclick="doFlip()">
-        <div class="inner-card" id="main-card">
-            <div class="face front" id="question">Loading...</div>
-            <div class="face back" id="answer">Loading...</div>
-        </div>
-    </div>
-
-    <div class="button-group">
-        <button class="btn btn-incorrect" onclick="submitResult(false)">Incorrect (Repeat)</button>
-        <button class="btn btn-correct" onclick="submitResult(true)">Correct (Got it!)</button>
-    </div>
-    
-    <div style="margin-top: 25px; color: #888; font-size: 0.85rem;">
-        Shortcuts: <kbd>Space</kbd> Flip | <kbd>←</kbd> Redo | <kbd>→</kbd> Mastered
+<div class="app-container" id="menu-screen">
+    <h1 class="menu-title">PM Pro Mastery</h1>
+    <p class="menu-subtitle">Challenge your Project Management knowledge!</p>
+    <div class="menu-grid">
+        <button class="btn-menu" style="background: var(--primary);" onclick="startApp('flash')">
+            <span>🗂️</span> Flashcards Mode
+        </button>
+        <button class="btn-menu" style="background: var(--accent);" onclick="startApp('quiz')">
+            <span>📝</span> Multiple Choice Quiz
+        </button>
     </div>
 </div>
 
-<div class="app-container screen-hidden" id="end-view">
-    <div style="background: white; padding: 50px; border-radius: 30px; box-shadow: 0 20px 40px rgba(0,0,0,0.1);">
-        <h1 id="result-title">Review Finished!</h1>
-        <p style="font-size: 1.2rem; margin: 25px 0;">You have mastered all terms in this session.</p>
-        <button class="btn btn-correct" onclick="location.reload()" style="width:100%; background: var(--primary);">Start Full Deck Again</button>
+<div class="app-container hidden" id="main-app">
+    <button class="home-btn" onclick="goHome()">🏠 Menu</button>
+    
+    <div class="progress-container">
+        <div style="display: flex; justify-content: space-between; font-size: 0.85rem; margin-bottom: 5px;">
+            <span id="card-count">Remaining: --</span>
+            <span id="mastery-text" style="color: var(--success); font-weight: bold;">Mastery: 0%</span>
+        </div>
+        <div class="progress-bar"><div class="progress-fill" id="progress-fill"></div></div>
     </div>
+
+    <div id="question-label">Definition</div>
+    <div id="question-text">...</div>
+
+    <div id="flashcard-view" class="flashcard-box" onclick="doFlip()">
+        <div class="inner-card" id="inner-card">
+            <div class="face front" id="flash-q">...</div>
+            <div class="face back" id="flash-a">...</div>
+        </div>
+    </div>
+
+    <div id="quiz-view" class="quiz-container hidden"></div>
+
+    <div id="flash-controls" style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+        <button class="btn-action" style="background: var(--danger);" onclick="handleResult(false)">✕ Incorrect</button>
+        <button class="btn-action" style="background: var(--success);" onclick="handleResult(true)">✓ Correct</button>
+    </div>
+
+    <div class="mode-footer">
+        <div class="mode-selector">
+            <button class="mode-btn" id="mode-flash" onclick="setMode('flash')">FLASHCARDS</button>
+            <button class="mode-btn" id="mode-quiz" onclick="setMode('quiz')">QUIZ MODE</button>
+        </div>
+    </div>
+</div>
+
+<div class="app-container hidden" id="end-screen">
+    <h1 style="color: var(--success);">🏆 Goal Achieved!</h1>
+    <p>You've successfully reviewed all terms.</p>
+    <button class="btn-action" style="background: var(--primary); width: 100%;" onclick="goHome()">Back to Menu</button>
 </div>
 
 <script>
 const flashcardsData = [
-{t:"Project", d:"an endeavor to produce/accomplish through a unique set of interrelated tasks and effective utilization of resources; begins when a need, problem, or opportunity is identified and ends when the project objectives have been achieved."},
-{t:"Product", d:"can either be a component of another item or an end item itself."},
-{t:"Capability to perform a service", d:"a business function supporting production or distribution."},
-{t:"Result", d:"an output from performing project management processes and activities."},
-{t:"Project Characteristics", d:"projects have a unique purpose, are temporary, developed using progressive elaboration, require resources from various areas, have a primary customer or sponsor, and involve uncertainty."},
-{t:"Triple Constraint", d:"framework of project scope, time, and cost that determines project success."},
-{t:"Project Management", d:"the application of knowledge, skills, tools, and techniques to project activities to meet project requirements."},
-{t:"Stakeholders", d:"people involved in or affected by project activities including project sponsor, team, support staff, customers, users, suppliers, and opponents."},
-{t:"Core Knowledge Areas", d:"project scope management, time management, cost management, and quality management."},
-{t:"Facilitating Knowledge Areas", d:"human resource management, communications management, risk management, and procurement management."},
-{t:"Project Success Criteria", d:"project meets scope, time, and cost goals, satisfies customer or sponsor, and achieves its main objectives."},
-{t:"Portfolio", d:"a collection of projects, programs, and other work grouped together to facilitate effective management and achieve strategic business objectives."},
-{t:"Portfolio Management", d:"centralized management of portfolios including identifying, prioritizing, authorizing, managing, and controlling projects and programs."},
-{t:"Program", d:"a group of related projects managed in a coordinated way to obtain benefits not available from managing them individually."},
-{t:"Program Management", d:"coordinated management of a program to achieve strategic objectives and benefits."},
-{t:"Project Manager", d:"person responsible for planning, organizing, integrating, managing, communicating, and ensuring project objectives for scope, cost, and time are met."},
-{t:"Project Management Skills", d:"skills involving business understanding, organization, communication, finance, and human resources needed to run a project."},
-{t:"People Skills", d:"ability to motivate people, resolve conflicts, use persuasion, and manage team relationships."},
-{t:"Integration Skills", d:"ability to integrate project phases including planning, execution, reporting, and management."},
-{t:"Technical Skills", d:"technical expertise needed to identify problems and understand the work performed by the project team."},
-{t:"Project Life Cycle", d:"a collection of project phases identifying activities performed, outputs produced, people involved, and management control."},
-{t:"Project Phases", d:"logically related activities culminating in a major deliverable such as concept, development, implementation, and close-out."},
-{t:"Concept Phase", d:"initial phase where the project is described, summary plan created, and preliminary cost estimate developed."},
-{t:"Development Phase", d:"phase where detailed project plans, accurate cost estimates, and a more thorough WBS are created."},
-{t:"Implementation Phase", d:"phase where the required work is performed and deliverables are produced."},
-{t:"Close-out Phase", d:"phase where work is completed, customer acceptance is obtained, and lessons learned are documented."},
-{t:"Systems Development Life Cycle (SDLC)", d:"framework describing phases involved in developing and maintaining information systems."},
-{t:"Predictive Life Cycle", d:"life cycle where project scope, schedule, and cost can be clearly defined early."},
-{t:"Adaptive Life Cycle", d:"approach where requirements evolve and cannot be predicted early in the project."},
-{t:"Structural Frame", d:"organizational perspective focusing on roles, responsibilities, and structure."},
-{t:"Human Resources Frame", d:"organizational perspective focusing on the needs of people and relationships."},
-{t:"Political Frame", d:"organizational perspective focusing on competition, power, and conflict among groups."},
-{t:"Symbolic Frame", d:"organizational perspective focusing on culture, symbols, and meaning of events."},
-{t:"Functional Organization", d:"structure where staff are grouped by functional specialties."},
-{t:"Project Organization", d:"structure designed specifically to execute projects."},
-{t:"Matrix Organization", d:"structure combining functional and project structures."},
-{t:"Process", d:"set of interrelated actions performed to achieve a specific product, service, or result."},
-{t:"Initiating Process Group", d:"process group where a project or phase is defined and authorized."},
-{t:"Planning Process Group", d:"process group establishing scope, objectives, and course of action."},
-{t:"Executing Process Group", d:"process group coordinating people and resources to carry out the project plan."},
-{t:"Monitoring and Controlling Process Group", d:"process group tracking, reviewing, and regulating project progress."},
-{t:"Closing Process Group", d:"process group formalizing acceptance and ending the project."},
-{t:"Scope", d:"all the work involved in creating project deliverables and processes used to produce them."},
-{t:"Work Breakdown Structure (WBS)", d:"deliverable-oriented grouping of project work defining total project scope."},
-{t:"Work Package", d:"lowest level of the WBS representing a task that can be scheduled and estimated."},
-{t:"Decomposition", d:"subdividing project deliverables into smaller manageable components."},
-{t:"Scope Creep", d:"uncontrolled expansion of project scope without adjustments to time, cost, or resources."},
-{t:"Gantt Chart", d:"bar chart used to display project schedule information."},
-{t:"Critical Path", d:"longest path through the project schedule determining the earliest completion date."},
-{t:"PERT Analysis", d:"network analysis technique used when project duration is uncertain."},
-{t:"Resource Leveling", d:"technique for resolving resource conflicts by delaying tasks."},
-{t:"Critical Chain Scheduling", d:"scheduling method that considers limited resources."},
-{t:"Cost", d:"resource sacrificed or foregone to achieve a specific objective."},
-{t:"Direct Costs", d:"costs directly related to producing project products and services."},
-{t:"Indirect Costs", d:"costs not directly related to products but necessary to support the project."},
-{t:"Sunk Cost", d:"money already spent that cannot be recovered."},
-{t:"Learning Curve Theory", d:"unit cost decreases as more units are produced repetitively."},
-{t:"Rough Order of Magnitude (ROM)", d:"cost estimate made early in the project with high uncertainty."},
-{t:"Cost Baseline", d:"approved time-phased project budget used to measure cost performance."},
-{t:"Earned Value Management (EVM)", d:"performance measurement integrating scope, schedule, and cost."},
-{t:"Planned Value (PV)", d:"authorized budget assigned to scheduled work."},
-{t:"Actual Cost (AC)", d:"total cost incurred for work performed."},
-{t:"Earned Value (EV)", d:"value of work actually completed."},
-{t:"Quality", d:"degree to which a set of inherent characteristics fulfills requirements."},
-{t:"Quality Assurance", d:"evaluating overall project performance to ensure quality standards are met."},
-{t:"Pareto Analysis", d:"technique identifying the vital few causes responsible for most problems."},
-{t:"Six Sigma", d:"comprehensive system for achieving and sustaining business success through quality improvement."},
-{t:"Histogram", d:"bar chart showing frequency distribution of data."},
-{t:"Control Chart", d:"graphical display of process performance over time."},
-{t:"Scatter Diagram", d:"diagram showing relationship between two variables."},
-{t:"Cause and Effect Diagram", d:"diagram identifying potential causes of quality problems."},
-{t:"Flowchart", d:"diagram showing relationships between system elements."},
-{t:"Intrinsic Motivation", d:"motivation driven by personal satisfaction."},
-{t:"Extrinsic Motivation", d:"motivation driven by rewards or avoidance of punishment."},
-{t:"Risk Management", d:"process of identifying, analyzing, and responding to project risks."},
-{t:"Risk Register", d:"document containing identified risks and their analysis."},
-{t:"Contingency Plans", d:"predefined actions taken when identified risks occur."},
-{t:"Fallback Plans", d:"alternative plans used when contingency plans fail."},
-{t:"Murphy's Law", d:"if something can go wrong, it will."},
-{t:"Parkinson's Law", d:"work expands to fill the time available."},
-{t:"Procurement", d:"acquiring goods or services from outside the organization."},
-{t:"Fixed Price Contract", d:"contract with a fixed total price for a product or service."},
-{t:"Cost Reimbursable Contract", d:"contract where seller is reimbursed for actual costs."},
-{t:"Statement of Work (SOW)", d:"description of work required for procurement."},
-{t:"Request for Proposal (RFP)", d:"document used to solicit proposals from sellers."},
-{t:"Bidder Conference", d:"meeting with potential sellers to clarify procurement requirements."},
-{t:"Source Selection", d:"process of evaluating proposals and selecting a supplier."},
-{t:"Contract Administration", d:"process ensuring seller performance meets contractual requirements."},
-{t:"Contract Close-out", d:"process verifying that work is completed and contract requirements satisfied."},
-{t:"Responsibility Assignment Matrix (RAM)", d:"matrix mapping project work to responsible individuals."},
-{t:"Configuration Management", d:"process ensuring project product descriptions are correct and complete."},
-{t:"Change Control Board (CCB)", d:"group responsible for approving or rejecting project changes."},
-{t:"Free Slack", d:"time an activity can be delayed without delaying successor activities."},
-{t:"Burst", d:"single node followed by two or more activities in a network diagram."},
-{t:"Merge", d:"two or more nodes preceding a single node in a network diagram."},
-{t:"Cash Flow Analysis", d:"method for determining estimated annual costs and benefits of a project."},
-{t:"Ishikawa Diagram", d:"another name for the cause and effect diagram used to identify possible causes of quality problems."},
-{t:"Plan Quality Management", d:"process of identifying quality requirements and documenting how the project will demonstrate compliance with quality standards."},
-{t:"Manage Quality", d:"process of translating the quality management plan into executable quality activities that incorporate the organization’s quality policies."},
-{t:"Control Quality", d:"process of monitoring and recording results of executing quality activities to assess performance and ensure project outputs are correct."},
-{t:"Cost Variance (CV)", d:"earned value minus actual cost which measures cost performance of a project."},
-{t:"Schedule Variance (SV)", d:"earned value minus planned value which measures schedule performance."},
-{t:"Cost Performance Index (CPI)", d:"earned value divided by actual cost which measures cost efficiency of budgeted resources."},
-{t:"Schedule Performance Index (SPI)", d:"earned value divided by planned value which measures schedule efficiency."},
-{t:"Estimate at Completion (EAC)", d:"forecast of the most likely total project cost based on project performance."},
-{t:"Estimate to Complete (ETC)", d:"expected cost required to finish all remaining project work."},
-{t:"Variance at Completion (VAC)", d:"difference between budget at completion and estimate at completion."},
-{t:"Benchmarking", d:"generating ideas for quality improvements by comparing project practices or product characteristics to those of other projects."},
-{t:"Quality Planning Tools", d:"tools used in planning quality such as cost-benefit analysis, benchmarking, design of experiments, and flowcharts."},
-{t:"Quality Metrics", d:"specific measurements used to determine whether project results meet quality standards."},
-{t:"Quality Checklist", d:"structured tool used to verify that required steps in a process have been performed."},
-{t:"Design of Experiments", d:"statistical method that helps identify which variables have the most influence on overall project outcomes."},
-{t:"Statistical Sampling", d:"method used to select part of a population of interest for inspection."},
-{t:"Prevention Cost", d:"costs associated with preventing defects in products or services."},
-{t:"Appraisal Cost", d:"costs associated with evaluating processes and outputs to ensure quality."},
-{t:"Failure Cost", d:"costs incurred when products fail to meet quality standards."},
-{t:"Internal Failure Cost", d:"costs resulting from defects found before the product is delivered to the customer."},
-{t:"External Failure Cost", d:"costs resulting from defects found after the product is delivered to the customer."},
-{t:"Team Development", d:"improving competencies, interaction, and overall team environment to enhance project performance."},
-{t:"Tuckman Model", d:"team development stages consisting of forming, storming, norming, performing, and adjourning."},
-{t:"Power", d:"potential ability to influence behavior to get people to do things they would not otherwise do."},
-{t:"Coercive Power", d:"power based on punishment, threats, or negative approaches."},
-{t:"Legitimate Power", d:"power based on formal authority or position."},
-{t:"Expert Power", d:"power based on personal knowledge and expertise."},
-{t:"Referent Power", d:"power based on personal charisma or respect from others."},
-{t:"Reward Power", d:"power based on the ability to reward others."},
-{t:"Deliverable", d:"a product or service produced as part of a project."},
-{t:"Activity List", d:"a tabulation of activities to be included on a project schedule."},
-{t:"Activity Attributes", d:"provide schedule-related information about each activity."},
-{t:"Milestone", d:"a significant event in a project that usually has no duration."},
-{t:"Mandatory Dependencies", d:"dependencies inherent in the nature of the work also known as hard logic."},
-{t:"External Dependencies", d:"dependencies involving relationships between project and non-project activities."},
-{t:"Total Slack", d:"amount of time an activity can be delayed without delaying the project finish date."},
-{t:"Network Diagram", d:"a schematic display of project activities and their logical relationships."},
-{t:"Critical Path Method", d:"network diagramming technique used to predict total project duration."},
-{t:"Analogous Estimating", d:"estimating technique that uses actual cost of a previous similar project."},
-{t:"Bottom-Up Estimating", d:"estimating technique that involves estimating individual work items and summing them."},
-{t:"Parametric Estimating", d:"estimating technique using statistical relationship between variables."},
-{t:"Three Point Estimate", d:"estimating technique using optimistic, pessimistic, and most likely estimates."},
-{t:"Balanced Scorecard", d:"methodology converting organizational value drivers into defined metrics."},
-{t:"Net Present Value (NPV)", d:"method of calculating expected monetary gain or loss by discounting future cash flows."},
-{t:"Return on Investment (ROI)", d:"ratio of benefits to costs used to evaluate project profitability."},
-{t:"Payback Period", d:"amount of time required to recover the investment cost of a project."},
-{t:"Cost of Quality", d:"cost of conformance plus cost of nonconformance."},
-{t:"Risk Utility", d:"amount of satisfaction received from a potential payoff."},
-{t:"Risk-Averse", d:"person with low tolerance for risk."},
-{t:"Risk-Seeking", d:"person with high tolerance for risk."},
-{t:"Procurement Audit", d:"review conducted during contract closeout to identify lessons learned."},
-{t:"Maslow's Hierarchy of Needs", d:"theory stating human behavior is guided by a sequence of needs."}
+    {t:"Project", d:"an endeavor to produce/accomplish through a unique set of interrelated tasks and effective utilization of resources."},
+    {t:"Product", d:"can either be a component of another item or an end item itself."},
+    {t:"Capability to perform a service", d:"a business function supporting production or distribution."},
+    {t:"Result", d:"an output from performing project management processes and activities."},
+    {t:"Triple Constraint", d:"framework of project scope, time, and cost that determines project success."},
+    {t:"Project Management", d:"the application of knowledge, skills, tools, and techniques to project activities."},
+    {t:"Stakeholders", d:"people involved in or affected by project activities including project sponsor, team, and customers."},
+    {t:"Portfolio", d:"a collection of projects, programs, and other work grouped together to achieve strategic objectives."},
+    {t:"Program", d:"a group of related projects managed in a coordinated way to obtain specific benefits."},
+    {t:"Project Manager", d:"person responsible for planning, organizing, and ensuring project objectives are met."},
+    {t:"Project Life Cycle", d:"a collection of project phases identifying activities, outputs, and management control."},
+    {t:"Concept Phase", d:"initial phase where the project is described and a summary plan is created."},
+    {t:"Implementation Phase", d:"phase where the required work is performed and deliverables are produced."},
+    {t:"Scope Creep", d:"uncontrolled expansion of project scope without adjustments to time or cost."},
+    {t:"Critical Path", d:"longest path through the project schedule determining the earliest completion date."},
+    {t:"Sunk Cost", d:"money already spent that cannot be recovered."},
+    {t:"Earned Value Management (EVM)", d:"performance measurement integrating scope, schedule, and cost."},
+    {t:"Quality Assurance", d:"evaluating overall project performance to ensure quality standards are met."},
+    {t:"Pareto Analysis", d:"technique identifying the vital few causes responsible for most problems."},
+    {t:"Risk Management", d:"process of identifying, analyzing, and responding to project risks."},
+    {t:"Fixed Price Contract", d:"contract with a fixed total price for a product or service."},
+    {t:"WBS", d:"deliverable-oriented grouping of project work defining total project scope."},
+    {t:"Milestone", d:"a significant event in a project that usually has no duration."},
+    {t:"Gantt Chart", d:"bar chart used to display project schedule information."},
+    {t:"Resource Leveling", d:"technique for resolving resource conflicts by delaying tasks."},
+    {t:"Cost Baseline", d:"approved time-phased project budget used to measure performance."},
+    {t:"Six Sigma", d:"system for achieving and sustaining business success through quality improvement."},
+    {t:"Murphy's Law", d:"if something can go wrong, it will."},
+    {t:"Parkinson's Law", d:"work expands to fill the time available."},
+    {t:"Tuckman Model", d:"stages of team development: forming, storming, norming, performing, adjourning."},
+    {t:"Expert Power", d:"power based on personal knowledge and expertise."},
+    {t:"Referent Power", d:"power based on personal charisma or respect from others."},
+    {t:"Net Present Value (NPV)", d:"calculating expected monetary gain/loss by discounting future cash flows."}
+    // Note: Dagdagan mo na lang dito yung iba pang terms gamit ang {t:"Term", d:"Def"} format.
 ];
 
 let workingDeck = [];
-let totalCount = 0;
+let currentMode = 'flash';
 let masteredCount = 0;
+let isProcessing = false;
 
-function shuffle(array) {
-    for (let i = array.length - 1; i > 0; i--) {
+function shuffle(arr) {
+    for (let i = arr.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
-        [array[i], array[j]] = [array[j], array[i]];
+        [arr[i], arr[j]] = [arr[j], arr[i]];
     }
 }
 
-function initGame() {
+function startApp(mode) {
+    document.getElementById('menu-screen').classList.add('hidden');
+    document.getElementById('main-app').classList.remove('hidden');
     workingDeck = [...flashcardsData];
-    totalCount = workingDeck.length;
-    masteredCount = 0;
     shuffle(workingDeck);
-    updateUI();
+    masteredCount = 0;
+    setMode(mode);
 }
 
-function updateUI() {
+function goHome() { location.reload(); }
+
+function setMode(mode) {
+    currentMode = mode;
+    document.getElementById('mode-flash').classList.toggle('active', mode === 'flash');
+    document.getElementById('mode-quiz').classList.toggle('active', mode === 'quiz');
+    
+    document.getElementById('flashcard-view').classList.toggle('hidden', mode === 'quiz');
+    document.getElementById('flash-controls').classList.toggle('hidden', mode === 'quiz');
+    document.getElementById('quiz-view').classList.toggle('hidden', mode === 'flash');
+    
+    renderCard();
+}
+
+function renderCard() {
     if (workingDeck.length === 0) {
-        showEndScreen();
+        document.getElementById('main-app').classList.add('hidden');
+        document.getElementById('end-screen').classList.remove('hidden');
         return;
     }
 
     const card = workingDeck[0];
-    const cardEl = document.getElementById('main-card');
-    cardEl.classList.remove('flipped');
+    const progress = (masteredCount / flashcardsData.length) * 100;
     
-    document.getElementById('question').textContent = card.d;
-    document.getElementById('answer').textContent = card.t;
-    document.getElementById('cards-left').textContent = workingDeck.length;
-    
-    // Progress is based on items mastered
-    const progress = (masteredCount / totalCount) * 100;
-    document.getElementById('progress-bar').style.width = progress + "%";
-}
+    document.getElementById('card-count').textContent = `Remaining: ${workingDeck.length}`;
+    document.getElementById('mastery-text').textContent = `Mastery: ${Math.round(progress)}%`;
+    document.getElementById('progress-fill').style.width = progress + "%";
 
-function doFlip() {
-    document.getElementById('main-card').classList.toggle('flipped');
-}
-
-function submitResult(isCorrect) {
-    const finishedCard = workingDeck.shift(); // Kunin yung current card
-
-    if (isCorrect) {
-        masteredCount++; // Pag tama, move on na
+    if (currentMode === 'flash') {
+        document.getElementById('question-label').textContent = "Term Category";
+        document.getElementById('question-text').textContent = "Tap the card to reveal the term";
+        document.getElementById('inner-card').classList.remove('flipped');
+        document.getElementById('flash-q').textContent = card.d;
+        document.getElementById('flash-a').textContent = card.t;
     } else {
-        // Pag mali, isingit ulit sa deck (mga 3-5 spots later)
-        const newPos = Math.min(workingDeck.length, 4); 
-        workingDeck.splice(newPos, 0, finishedCard);
+        document.getElementById('question-label').textContent = "Question";
+        document.getElementById('question-text').textContent = card.d;
+        generateQuizOptions(card.t);
     }
-
-    updateUI();
 }
 
-function showEndScreen() {
-    document.getElementById('game-view').classList.add('screen-hidden');
-    document.getElementById('end-view').classList.remove('screen-hidden');
+function generateQuizOptions(correctTerm) {
+    const quizContainer = document.getElementById('quiz-view');
+    quizContainer.innerHTML = '';
+    
+    let others = flashcardsData.map(c => c.t).filter(t => t !== correctTerm);
+    shuffle(others);
+    let options = [correctTerm, ...others.slice(0, 3)];
+    shuffle(options);
+
+    options.forEach(opt => {
+        const btn = document.createElement('button');
+        btn.className = 'option-btn';
+        btn.textContent = opt;
+        btn.onclick = () => {
+            if (isProcessing) return;
+            isProcessing = true;
+            if (opt === correctTerm) {
+                btn.classList.add('correct');
+                setTimeout(() => { handleResult(true); isProcessing = false; }, 600);
+            } else {
+                btn.classList.add('wrong');
+                setTimeout(() => { handleResult(false); isProcessing = false; }, 1000);
+            }
+        };
+        quizContainer.appendChild(btn);
+    });
 }
 
-// Shortcuts
-document.addEventListener('keydown', (e) => {
-    if (document.getElementById('game-view').classList.contains('screen-hidden')) return;
-    if (e.code === 'Space') { e.preventDefault(); doFlip(); }
-    if (e.code === 'ArrowLeft') submitResult(false);
-    if (e.code === 'ArrowRight') submitResult(true);
-});
+function doFlip() { 
+    if(currentMode === 'flash') document.getElementById('inner-card').classList.toggle('flipped'); 
+}
 
-initGame();
+function handleResult(isCorrect) {
+    const card = workingDeck.shift();
+    if (isCorrect) masteredCount++;
+    else workingDeck.splice(Math.min(workingDeck.length, 5), 0, card);
+    renderCard();
+}
 </script>
 </body>
 </html>
